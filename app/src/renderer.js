@@ -24,3 +24,9 @@ audio.addEventListener("ended",()=>{if(state.tracks.length)playTrack((state.inde
 document.querySelectorAll(".album-card").forEach(card=>card.addEventListener("click",()=>{const offset=Number(card.dataset.slot);if(state.tracks.length){const i=state.index<0?0:(state.index+offset+state.tracks.length)%state.tracks.length;playTrack(i)}else addFiles()}));
 $("settings-btn").addEventListener("click",()=>$("accent-color").click());
 renderTracks();updatePlayer();
+const servicesPanel=$("services-panel");
+function showServices(open){servicesPanel.classList.toggle("visible",open);servicesPanel.setAttribute("aria-hidden",String(!open))}
+$("services-btn").addEventListener("click",()=>showServices(true));
+$("close-services").addEventListener("click",()=>showServices(false));
+servicesPanel.addEventListener("click",e=>{if(e.target===servicesPanel)showServices(false)});
+document.querySelectorAll("[data-service]").forEach(button=>button.addEventListener("click",async()=>{try{await window.verdant.openService(button.dataset.service)}catch(error){console.error("Could not open provider",error)}}));
