@@ -1,31 +1,26 @@
-const audio = document.getElementById("audio");
-const $ = (id) => document.getElementById(id);
-const state = { tracks: [], index: -1, playing: false, context: null, analyser: null, source: null, data: null };
-const wave = $("waveform"), smallBars = $("light-bars"), bigBars = $("big-bars");
-for (let i=0;i<54;i++){const s=document.createElement("span");wave.appendChild(s)}
-for (let i=0;i<22;i++){const s=document.createElement("span");smallBars.appendChild(s)}
-for (let i=0;i<64;i++){const s=document.createElement("span");bigBars.appendChild(s)}
-const waveNodes=[...wave.children], smallNodes=[...smallBars.children], bigNodes=[...bigBars.children];
-function fmt(seconds){if(!Number.isFinite(seconds))return "0:00";return Math.floor(seconds/60)+":"+String(Math.floor(seconds%60)).padStart(2,"0")}
-function setAccent(value){document.documentElement.style.setProperty("--accent",value);localStorage.setItem("verdant-accent",value)}
-setAccent(localStorage.getItem("verdant-accent")||"#48f59a");$("accent-color").value=localStorage.getItem("verdant-accent")||"#48f59a";
+const audio=document.getElementById("audio");
+const $=id=>document.getElementById(id);
+const state={tracks:[],index:-1,playing:false,context:null,analyser:null,source:null,data:null};
+function fmt(s){return !Number.isFinite(s)? "0:00":Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0")}
+function setAccent(value){document.documentElement.style.setProperty("--accent",value);localStorage.setItem("verdant-accent",value);const label=$("color-name");if(label)label.textContent=value.toUpperCase()}
+const saved=localStorage.getItem("verdant-accent")||"#55f39a";setAccent(saved);$("accent-color").value=saved;
 $("accent-color").addEventListener("input",e=>setAccent(e.target.value));
-function renderTracks(){const targets=[$("track-list"),$("library-track-list")];for(const target of targets){target.innerHTML="";if(!state.tracks.length){target.innerHTML='<div class="empty-state"><div class="empty-icon">♫</div><strong>Your library is waiting</strong><span>Add local audio files to get started.</span><button class="text-button" data-add>Browse files</button></div>';target.querySelector("[data-add]")?.addEventListener("click",addFiles);continue}state.tracks.forEach((track,i)=>{const row=document.createElement("div");row.className="track-row"+(i===state.index?" playing":"");row.innerHTML='<span class="track-index">'+String(i+1).padStart(2,"0")+'</span><span class="track-row-title"></span><span class="track-row-sub">LOCAL FILE</span><span class="track-row-play">'+(i===state.index&&state.playing?"♫":"▶")+'</span>';row.querySelector(".track-row-title").textContent=track.name;row.addEventListener("click",()=>playTrack(i));target.appendChild(row)})}}
-async function addFiles(){if(!window.verdant?.pickAudio)return;const files=await window.verdant.pickAudio();const known=new Set(state.tracks.map(t=>t.url));for(const file of files){if(!known.has(file.url))state.tracks.push(file)}$("collection-count").textContent=state.tracks.length+" tracks added";$("library-summary").textContent=state.tracks.length+" tracks in your library";renderTracks();if(state.index<0&&state.tracks.length)playTrack(0)}
-function setupAudioGraph(){if(state.context)return;const AudioContext=window.AudioContext||window.webkitAudioContext;if(!AudioContext)return;state.context=new AudioContext();state.analyser=state.context.createAnalyser();state.analyser.fftSize=128;state.data=new Uint8Array(state.analyser.frequencyBinCount);state.source=state.context.createMediaElementSource(audio);state.source.connect(state.analyser);state.analyser.connect(state.context.destination)}
-async function playTrack(index){if(index<0||index>=state.tracks.length)return;state.index=index;audio.src=state.tracks[index].url;audio.load();setupAudioGraph();if(state.context?.state==="suspended")await state.context.resume();try{await audio.play();state.playing=true}catch(err){state.playing=false;console.error("Playback failed",err)}updatePlayer();renderTracks()}
-function updatePlayer(){const track=state.tracks[state.index];$("track-title").textContent=track?.name||"Nothing playing yet";$("track-artist").textContent=track?"Local audio file":"Choose a track from your library";$("play-btn").textContent=state.playing?"Ⅱ":"▶";$("cover-art").style.boxShadow=state.playing?"0 0 30px color-mix(in srgb,var(--accent) 22%,transparent)":"none"}
-$("play-btn").addEventListener("click",async()=>{if(state.index<0){if(state.tracks.length)await playTrack(0);else await addFiles();return}if(audio.paused){setupAudioGraph();if(state.context?.state==="suspended")await state.context.resume();await audio.play();state.playing=true}else{audio.pause();state.playing=false}updatePlayer();renderTracks()});
-$("prev-btn").addEventListener("click",()=>playTrack(Math.max(0,state.index-1)));
-$("next-btn").addEventListener("click",()=>playTrack((state.index+1)%state.tracks.length));
-$("add-music").addEventListener("click",addFiles);$("empty-add").addEventListener("click",addFiles);$("library-add").addEventListener("click",addFiles);
+function updateClock(){const now=new Date();$("clock").textContent=now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",hour12:false});$("date-label").textContent=now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}).toUpperCase().replace(","," ·")}
+updateClock();setInterval(updateClock,1000);
+function updatePlayer(){const t=state.tracks[state.index];$("track-title").textContent=t?.name||"Nothing playing yet";$("track-artist").textContent=t?"LOCAL AUDIO FILE":"Add a song to begin";$("hero-track-title").textContent=t?.name||"Choose your soundtrack";$("hero-track-artist").textContent=t?"NOW PLAYING · LOCAL AUDIO":"YOUR MUSIC · YOUR SPACE";$("play-btn").textContent=state.playing?"Ⅱ":"▶";$("cover-art").style.boxShadow=state.playing?"0 0 32px color-mix(in srgb,var(--accent) 30%,transparent)":"none"}
+function renderTracks(){const target=$("track-list");target.innerHTML="";if(!state.tracks.length){target.innerHTML='<div class="playlist-empty">Your tracks will appear here.<br>Bring your own sound into the room.</div>'}else state.tracks.forEach((t,i)=>{const row=document.createElement("div");row.className="track-row"+(i===state.index?" playing":"");row.innerHTML='<span class="track-index">'+String(i+1).padStart(2,"0")+'</span><span class="track-row-title"></span><span class="track-row-play">'+(i===state.index&&state.playing?"♫":"▶")+'</span>';row.querySelector(".track-row-title").textContent=t.name;row.addEventListener("click",()=>playTrack(i));target.appendChild(row)});$("collection-count").textContent=state.tracks.length+" TRACK"+(state.tracks.length===1?"":"S")}
+async function addFiles(){if(!window.verdant?.pickAudio)return;const files=await window.verdant.pickAudio();const known=new Set(state.tracks.map(t=>t.url));for(const f of files)if(!known.has(f.url))state.tracks.push(f);renderTracks();if(state.index<0&&state.tracks.length)playTrack(0)}
+function setupAudio(){if(state.context)return;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;state.context=new AC();state.analyser=state.context.createAnalyser();state.analyser.fftSize=128;state.data=new Uint8Array(state.analyser.frequencyBinCount);state.source=state.context.createMediaElementSource(audio);state.source.connect(state.analyser);state.analyser.connect(state.context.destination)}
+async function playTrack(i){if(i<0||i>=state.tracks.length)return;state.index=i;audio.src=state.tracks[i].url;audio.load();setupAudio();if(state.context?.state==="suspended")await state.context.resume();try{await audio.play();state.playing=true}catch(e){state.playing=false;console.error(e)}updatePlayer();renderTracks()}
+$("play-btn").addEventListener("click",async()=>{if(state.index<0){await addFiles();return}if(audio.paused){setupAudio();if(state.context?.state==="suspended")await state.context.resume();await audio.play()}else audio.pause()});
+$("prev-btn").addEventListener("click",()=>{if(state.tracks.length)playTrack((state.index-1+state.tracks.length)%state.tracks.length)});
+$("next-btn").addEventListener("click",()=>{if(state.tracks.length)playTrack((state.index+1)%state.tracks.length)});
+$("add-music").addEventListener("click",addFiles);
 $("volume").addEventListener("input",e=>audio.volume=Number(e.target.value));audio.volume=.8;
 $("progress").addEventListener("input",e=>{if(audio.duration)audio.currentTime=audio.duration*Number(e.target.value)/1000});
 audio.addEventListener("timeupdate",()=>{$("current-time").textContent=fmt(audio.currentTime);$("duration").textContent=fmt(audio.duration);if(audio.duration)$("progress").value=audio.currentTime/audio.duration*1000});
-audio.addEventListener("ended",()=>{if(state.index<state.tracks.length-1)playTrack(state.index+1);else{state.playing=false;updatePlayer();renderTracks()}});
-audio.addEventListener("pause",()=>{state.playing=false;updatePlayer();renderTracks()});
-audio.addEventListener("play",()=>{state.playing=true;updatePlayer();renderTracks()});
-document.querySelectorAll(".nav").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n===btn));document.querySelectorAll(".content").forEach(v=>v.classList.add("hidden"));$(btn.dataset.view+"-view").classList.remove("hidden");$("view-name").textContent=btn.textContent.trim()}));
-$("settings-btn").addEventListener("click",()=>{$("accent-color").focus();$("accent-color").click()});
-function animate(){requestAnimationFrame(animate);let values;if(state.analyser){state.analyser.getByteFrequencyData(state.data);values=state.data}else values=Array.from({length:64},(_,i)=>12+Math.abs(Math.sin(Date.now()/650+i*.48))*18);waveNodes.forEach((node,i)=>node.style.setProperty("--h",Math.max(3,(values[i%values.length]/255)*31)+"px"));smallNodes.forEach((node,i)=>node.style.height=Math.max(3,(values[i*2%values.length]/255)*48)+"px");bigNodes.forEach((node,i)=>node.style.height=Math.max(4,(values[i%values.length]/255)*190)+"px")}
-animate();renderTracks();updatePlayer();
+audio.addEventListener("play",()=>{state.playing=true;updatePlayer();renderTracks()});audio.addEventListener("pause",()=>{state.playing=false;updatePlayer();renderTracks()});
+audio.addEventListener("ended",()=>{if(state.tracks.length)playTrack((state.index+1)%state.tracks.length)});
+document.querySelectorAll(".album-card").forEach(card=>card.addEventListener("click",()=>{const offset=Number(card.dataset.slot);if(state.tracks.length){const i=state.index<0?0:(state.index+offset+state.tracks.length)%state.tracks.length;playTrack(i)}else addFiles()}));
+$("settings-btn").addEventListener("click",()=>$("accent-color").click());
+renderTracks();updatePlayer();
