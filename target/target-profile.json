@@ -1,0 +1,26 @@
+{
+  "product": "iBaila",
+  "official_product_page": "https://aestheticmac.com/ibaila",
+  "target_version": null,
+  "platform": null,
+  "architecture": null,
+  "installer": {
+    "filename": null,
+    "source_url": null,
+    "acquired_at": null,
+    "size_bytes": null,
+    "sha256": null,
+    "signature_publisher": null
+  },
+  "analysis": {
+    "package_format": null,
+    "runtime": null,
+    "rea_version": null,
+    "evidence_ids": [],
+    "status": "not-started"
+  },
+  "notes": [
+    "Populate only from a verified, authorized target build.",
+    "Do not commit proprietary installers, extracted app contents, or credentials."
+  ]
+}
