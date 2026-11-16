@@ -1,0 +1,42 @@
+# Dependencies and build output
+node_modules/
+dist/
+build/
+out/
+target-build/
+.release/
+coverage/
+
+# Local target files and extracted proprietary application contents
+target/installers/
+target/extracted/
+target/runtime/
+*.asar
+*.dmg
+*.exe
+*.msi
+*.app/
+
+# Evidence may contain sensitive machine/account data; commit only sanitized artifacts
+evidence/raw/
+evidence/private/
+*.har
+*.pcap
+*.pcapng
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
