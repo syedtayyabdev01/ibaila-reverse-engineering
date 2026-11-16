@@ -7,6 +7,9 @@ on:
       - "app/**"
       - ".github/workflows/windows-build.yml"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -24,9 +27,18 @@ jobs:
         run: npm install
       - name: Build Windows installer
         run: npm run dist
-      - name: Upload installer
+      - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: verdant-audio-windows-installer
           path: app/release/*.exe
           if-no-files-found: error
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.1.0-build.${{ github.run_number }}
+          name: Verdant Audio 0.1.0 (Build ${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          files: app/release/*.exe
+          fail_on_unmatched_files: true
+          generate_release_notes: true
