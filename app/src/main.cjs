@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 
@@ -48,4 +48,18 @@ app.whenReady().then(() => {
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+const SERVICE_URLS = Object.freeze({
+  spotify: "https://open.spotify.com/",
+  youtubeMusic: "https://music.youtube.com/",
+  appleMusic: "https://music.apple.com/",
+  googleDrive: "https://drive.google.com/",
+  oneDrive: "https://onedrive.live.com/"
+});
+ipcMain.handle("service:open", async (_event, serviceId) => {
+  const url = SERVICE_URLS[serviceId];
+  if (!url) throw new Error("Unsupported music service");
+  await shell.openExternal(url);
+  return { opened: true, serviceId };
 });
