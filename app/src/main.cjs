@@ -4,11 +4,12 @@ const { pathToFileURL } = require("node:url");
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1280,
-    height: 820,
-    minWidth: 960,
-    minHeight: 640,
-    backgroundColor: "#07110d",
+    width: 1600,
+    height: 900,
+    minWidth: 1050,
+    minHeight: 700,
+    backgroundColor: "#06110f",
+    autoHideMenuBar: true,
     title: "Verdant Audio",
     show: false,
     webPreferences: {
