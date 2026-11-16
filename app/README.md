@@ -47,3 +47,7 @@ npm run dist:dir
 - Use only authorized assets, source, and integrations.
 - Treat the original product's license and written permission as the scope boundary.
 - Do not copy proprietary artwork, branding, or source unless the permission explicitly allows it.
+
+## Music services
+
+The Music Services panel currently opens official provider websites for Spotify, YouTube Music, Apple Music, Google Drive and OneDrive. This is a launch shortcut only: it is **not** OAuth account linking, cloud-library sync, playlist import, or in-app streaming yet. Those require separate provider-approved integrations and production OAuth/backend setup. See [PUBLIC_MUSIC_INTEGRATIONS.md](../docs/PUBLIC_MUSIC_INTEGRATIONS.md).
