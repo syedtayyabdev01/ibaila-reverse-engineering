@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' file: blob:; style-src 'self'; script-src 'self';">
+  <title>Verdant Audio</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">V</div><div><strong>VERDANT</strong><small>A U D I O</small></div></div>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav active" data-view="home"><span>◈</span> Overview</button>
+      <button class="nav" data-view="library"><span>♫</span> Your library</button>
+      <button class="nav" data-view="visualizer"><span>▥</span> Visualizer</button>
+      <div class="side-label collection-label">YOUR COLLECTION</div>
+      <div class="collection-empty" id="collection-count">Your music will appear here.</div>
+      <div class="sidebar-bottom"><div class="online-dot"></div><span>LOCAL PLAYER</span><span class="version">v0.1.0</span></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <b id="view-name">Overview</b></div><div class="top-actions"><span class="status"><i></i> SYSTEM READY</span><button class="icon-button" id="settings-btn" aria-label="Settings">⚙</button></div></header>
+      <section class="content" id="home-view">
+        <div class="hero-row"><div><div class="eyebrow"><span></span> YOUR SOUND, YOUR SPACE</div><h1>Feel every <em>frequency.</em></h1><p class="subhead">A calmer kind of music experience. Powered by your library.</p></div><div class="hero-orb"><div class="orb-core"></div><div class="orb-ring ring-one"></div><div class="orb-ring ring-two"></div></div></div>
+        <div class="dashboard-grid">
+          <section class="panel now-panel"><div class="panel-heading"><span>NOW PLAYING</span><span class="live-pill">● LIVE</span></div><div class="track-stage"><div class="cover-art" id="cover-art"><div class="cover-symbol">V</div><div class="cover-caption">VERDANT<br>SESSIONS</div></div><div class="track-meta"><div class="track-title" id="track-title">Nothing playing yet</div><div class="track-artist" id="track-artist">Choose a track from your library</div><div class="track-tags"><span>LOCAL AUDIO</span><span>GREEN MODE</span></div></div></div><div class="waveform" id="waveform" aria-hidden="true"></div><div class="player-controls"><button class="control" id="prev-btn" aria-label="Previous">|◀</button><button class="play-button" id="play-btn" aria-label="Play">▶</button><button class="control" id="next-btn" aria-label="Next">▶|</button><div class="volume-wrap"><span>VOL</span><input id="volume" type="range" min="0" max="1" step="0.01" value="0.8"></div></div><div class="progress-row"><span id="current-time">0:00</span><input id="progress" type="range" min="0" max="1000" value="0"><span id="duration">0:00</span></div></section>
+          <section class="panel visual-panel"><div class="panel-heading"><span>LIGHT ENGINE</span><span class="engine-state"><i></i> ACTIVE</span></div><div class="light-preview"><div class="light-frame"><div class="light-screen"><div class="light-screen-label">AUDIO<br>REACTIVE</div><div class="light-bars" id="light-bars"></div></div><div class="edge edge-top"></div><div class="edge edge-right"></div><div class="edge edge-bottom"></div><div class="edge edge-left"></div></div></div><div class="light-footer"><div><small>AMBIENT COLOR</small><strong>Verdant Green</strong></div><input type="color" id="accent-color" value="#48f59a" aria-label="Lighting color"></div><p class="panel-note">Preview lighting reacts to the music playing in this app.</p></section>
+        </div>
+        <section class="panel library-panel"><div class="library-heading"><div><div class="panel-heading">YOUR LIBRARY</div><p>Bring your own sound into the room.</p></div><button class="primary-button" id="add-music">＋ Add music</button></div><div class="track-list" id="track-list"><div class="empty-state"><div class="empty-icon">♫</div><strong>Your library is waiting</strong><span>Add local audio files to get started.</span><button class="text-button" id="empty-add">Browse files</button></div></div></section>
+      </section>
+      <section class="content secondary-view hidden" id="library-view"><div class="section-title"><div class="eyebrow"><span></span> YOUR COLLECTION</div><h1>Your <em>library.</em></h1><p class="subhead">Music stays on your device. Nothing is uploaded.</p></div><section class="panel library-panel"><div class="library-heading"><div><div class="panel-heading">ALL TRACKS</div><p id="library-summary">0 tracks in your library</p></div><button class="primary-button" id="library-add">＋ Add music</button></div><div class="track-list" id="library-track-list"></div></section></section>
+      <section class="content secondary-view hidden" id="visualizer-view"><div class="section-title"><div class="eyebrow"><span></span> LIVE AUDIO</div><h1>Sound in <em>motion.</em></h1><p class="subhead">A real-time visualizer for the track you're playing.</p></div><section class="panel big-visualizer"><div id="big-bars" class="big-bars"></div><div class="visualizer-caption">VERDANT AUDIO SPECTRUM</div></section></section>
+      <footer class="footer"><span>VERDANT AUDIO</span><span>BUILT FOR YOUR DESKTOP <b>•</b> YOUR MUSIC STAYS LOCAL</span></footer>
+    </main>
+  </div>
+  <audio id="audio" preload="metadata"></audio>
+  <script src="./renderer.js"></script>
+</body>
+</html>
